@@ -277,12 +277,12 @@ frag(paste0(sapply(seq_len(nrow(cvw)), function(i) { r <- cvw[i, ]; row(FAMN[r$f
 
 # --- A12: robustness variants (five-feature model), zone omnibus variants, CLMMs
 VARN <- c(full_666 = "Primary (666)", no_flagged = "Without flagged rows", no_trained = "Without trained raters", session_RE = "+ session random effect",
-          xl2_on_666 = "XL2 level (666)", all_990_xl2 = "All 990, XL2 level", no_flagged_990 = "990 without flagged rows", no_0702_xl2 = "Without 2 July, XL2 level")
+          xl2_on_666 = "XL2 level (666)", all_990_xl2 = "All 990, XL2 level", no_flagged_990 = "990 without flagged rows")
 hvw <- hv %>% filter(term %in% FEAT_LEVELS) %>% mutate(cellv = paste0(fnum(Estimate, 3), " (", fp(`Pr(>|t|)`), ")")) %>% select(outcome, term, variant, cellv) %>%
   tidyr::pivot_wider(names_from = variant, values_from = cellv)
-rrows <- unlist(lapply(OUT4, function(o) c(sub_head(OUTN[o], 9), paste0(sapply(FEAT_LEVELS, function(tm) { r <- hvw[hvw$outcome == o & hvw$term == tm, ]
+rrows <- unlist(lapply(OUT4, function(o) c(sub_head(OUTN[o], 8), paste0(sapply(FEAT_LEVELS, function(tm) { r <- hvw[hvw$outcome == o & hvw$term == tm, ]
   row(TERMN[tm], sapply(names(VARN), function(v) ifelse(is.na(r[[v]]), "--", r[[v]]))) }), " \\\\"))))
-frag(rrows, row("Term", paste0("V", seq_along(VARN))), "lcccccccc", "si_robustness_variants.tex")
+frag(rrows, row("Term", paste0("V", seq_along(VARN))), "lccccccc", "si_robustness_variants.tex")
 cl <- bind_rows(OUTC("analysis_12_robustness", "clmm_rating_appropriateness.csv"), OUTC("analysis_12_robustness", "clmm_rating_noisiness.csv"))
 frag(paste0(sapply(seq_len(nrow(cl)), function(i) { r <- cl[i, ]; row(OUTN[r$outcome], TERMN[r$term], bse(r$Estimate, r$`Std. Error`), fnum(r$`z value`, 2), fp(r$`Pr(>|z|)`)) }), " \\\\"),
      row("Outcome", "Term", "Log-odds (SE)", "$z$", "$p$"), "llccc", "si_clmm.tex")
