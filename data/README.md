@@ -2,8 +2,8 @@
 
 ## The Zenodo workbook (required)
 
-Download `Campus_soundwalk_summer_2026_perception_acoustics_visual.xlsx` from Zenodo (CC BY 4.0; the DOI is given in the
-paper's Data availability statement) and place it in **this folder**:
+Download `Campus_soundwalk_summer_2026_perception_acoustics_visual.xlsx` from Zenodo (https://doi.org/10.5281/zenodo.23420131, CC BY 4.0) and
+place it in **this folder**:
 
 ```
 data/Campus_soundwalk_summer_2026_perception_acoustics_visual.xlsx

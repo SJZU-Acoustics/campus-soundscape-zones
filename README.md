@@ -25,7 +25,7 @@ R code for reproducing the statistical analyses, figures and tables for the manu
 The analysis reads a single input: the Zenodo workbook
 `Campus_soundwalk_summer_2026_perception_acoustics_visual.xlsx` (CC BY 4.0).
 
-1. Download it from Zenodo (the DOI is given in the paper's Data availability statement).
+1. Download it from Zenodo: https://doi.org/10.5281/zenodo.23420131.
 2. Place the `.xlsx` file in the `data/` folder (see `data/README.md`).
 
 The workbook holds the 990 ratings that 30 students gave at 208 stops on eight sites of one campus: source salience, the eight ICSAQ descriptors with Comfort and Richness, appropriateness, noisiness, and the stops' sound levels, psychoacoustic metrics and panorama composition. It also holds the evaluator, session and site tables, and for each of the 143 calibrated recordings the ecoacoustic indices and the detection scores of a pretrained audio tagger.
@@ -91,4 +91,4 @@ Workbook cells hold 16 significant digits, so some computed values in the deposi
 
 ## License
 
-Code in this repository is released under the MIT License (see `LICENSE`). The input data are archived separately under CC BY 4.0 at Zenodo (see Data). The OpenStreetMap layer of Figure 1a is © OpenStreetMap contributors under the Open Database License.
+Code in this repository is released under the MIT License (see `LICENSE`). The input data are archived separately under CC BY 4.0 at Zenodo (https://doi.org/10.5281/zenodo.23420131). The OpenStreetMap layer of Figure 1a is © OpenStreetMap contributors under the Open Database License.
