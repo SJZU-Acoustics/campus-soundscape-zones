@@ -1,0 +1,7 @@
+output/
+data/*.xlsx
+data/osm/*.csv
+.DS_Store
+.Rhistory
+.RData
+__pycache__/
