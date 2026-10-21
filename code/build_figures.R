@@ -148,7 +148,7 @@ qr <- OUTC("analysis_16_quadrants", "quadrant_by_recording.csv") %>%
   count(zone, quadrant) %>% group_by(zone) %>% mutate(pct = 100 * n / sum(n)) %>% ungroup()
 f2d <- ggplot(qr, aes(pct, zone, fill = quadrant)) +
   geom_col(width = 0.72, colour = NA) +
-  scale_fill_manual(values = QUAD_FILL, breaks = QUAD_LEVELS) +
+  scale_fill_manual(values = QUAD_FILL, breaks = QUAD_LEVELS, labels = QUAD_LAB) +
   scale_x_continuous(expand = expansion(mult = c(0, 0.02)), breaks = seq(0, 100, 25)) +
   zone_y() + labs(x = "Share of stops (%)", y = NULL) + theme_pub() +
   guides(fill = guide_legend(nrow = 2)) +
@@ -174,7 +174,7 @@ f3a <- ggplot(qr_env, aes(richness, comfort, colour = zone, shape = zone)) +
   geom_vline(xintercept = 0, colour = "grey60", linewidth = 0.3, linetype = "22") +
   geom_point(size = 1.8, alpha = 0.9) +
   annotate("text", x = c(-0.68, 0.68, -0.68, 0.68), y = c(0.64, 0.64, -0.64, -0.64),
-           label = c("calm", "vibrant", "monotonous", "chaotic"), colour = "grey45",
+           label = unname(QUAD_LAB[QUAD_LEVELS]), colour = "grey45",
            hjust = c(0, 1, 0, 1), size = 2.8, family = "Helvetica", fontface = "italic") +
   scale_colour_manual(values = ZONE_COL, labels = ZONE_LAB) +
   scale_shape_manual(values = ZONE_SHAPE, labels = ZONE_LAB) +
@@ -273,7 +273,7 @@ f4c <- ggplot(lad, aes(step, env_var_explained, colour = outcome, group = outcom
   OUT_SCALE +
   scale_y_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.25), expand = c(0, 0)) +
   scale_x_discrete(expand = expansion(add = 0.35)) +
-  labs(x = "Predictors added cumulatively", y = "Between-stop variance\nexplained (share)") + theme_pub() +
+  labs(x = "Predictors added cumulatively", y = "Reduction in between-stop\nvariance (share)") + theme_pub() +
   guides(colour = guide_legend(order = 1))
 
 # one legend for the whole figure, drawn in the empty fourth cell: the outcome colours from c
@@ -336,7 +336,7 @@ f5b <- ggplot(qe, aes(emmean, zone, colour = quadrant)) +
   geom_errorbar(aes(xmin = lower.CL, xmax = upper.CL), width = 0,
                  position = position_dodge(width = 0.7), linewidth = 0.4) +
   geom_point(position = position_dodge(width = 0.7), size = 1.7) +
-  scale_colour_manual(values = QUAD_COL, breaks = QUAD_LEVELS) +
+  scale_colour_manual(values = QUAD_COL, breaks = QUAD_LEVELS, labels = QUAD_LAB) +
   scale_x_continuous(limits = c(1, 5), breaks = 1:5) +
   zone_y() + labs(x = "Appropriateness (1–5)", y = NULL) + theme_pub() +
   theme(legend.position = "top", legend.location = "plot", legend.justification = "left",
@@ -347,7 +347,7 @@ f5 <- (f5a | f5b) + plot_annotation(tag_levels = "a") &
 sv(f5, "fig3_fit.png", W2, W2 * 0.50)
 
 # =============================================================================
-# Fig. 6 — what measurements and other listeners recover at unseen sites:
+# Fig. 6 — what measurements and other listeners recover at held-out sites:
 # the predictor hierarchy (a; A21) and further feature sets (b; A11)
 # =============================================================================
 R2_HELD <- "Prediction *R*<sup>2</sup> at held-out sites<br>(stop means)"

@@ -101,7 +101,7 @@ t2rows <- c(sub_head("Five-feature model, 666 ratings with the 30-s region", 9),
             paste0(row("$R^2_{\\mathrm{m}}$ / $R^2_{\\mathrm{c}}$",
                        unlist(lapply(OUT4, function(o) c(paste0(fnum(lad$r2m[lad$outcome == o], 2), " / ",
                                                                  fnum(lad$r2c[lad$outcome == o], 2)), "")))), " \\\\"),
-            mid, sub_head("Replication on all 990 ratings with the XL2 level (no tonality)", 9),
+            mid, sub_head("Full-sample analysis using XL2 level (990 questionnaires; no tonality)", 9),
             sapply(c("level_z", "src_natural_z", "src_human_z", "src_mechanical_z"), function(tm)
               paste0(row(TERMN[tm], unlist(lapply(OUT4, function(o) cell(rep990, tm, o)))), " \\\\")))
 frag(t2rows, row("Term", "$\\beta$ (SE)", "$p$", "$\\beta$ (SE)", "$p$", "$\\beta$ (SE)", "$p$", "$\\beta$ (SE)", "$p$"),
@@ -145,8 +145,8 @@ t3block <- function(o, lab) c(sub_head(lab, 5), sapply(ZONE_LEVELS, function(z) 
   r <- zs[zs$outcome == o & zs$zone == z, ]
   paste0(row(ZN(z), paste0(fnum(r$median_level, 1), " (", fnum(r$lo, 1), "--", fnum(r$hi, 1), ")"), t3cell(r)), " \\\\")
 }))
-t3rows <- c(t3block("comfort", "Comfort (neutral $=$ 0)"), mid, t3block("rating_appropriateness", "Appropriateness (neutral $=$ 3)"))
-frag(t3rows, row("Site", "\\shortstack{Observed level\\\\(dB(A))}", "\\shortstack{Slope per 10 dB\\\\(95\\% CI)}", "\\shortstack{Neutral level\\\\(95\\% CI)}", "\\shortstack{Headroom\\\\(dB)}"),
+t3rows <- c(t3block("comfort", "Comfort (midpoint $=$ 0)"), mid, t3block("rating_appropriateness", "Appropriateness (midpoint $=$ 3)"))
+frag(t3rows, row("Site", "\\shortstack{Observed level\\\\(dB(A))}", "\\shortstack{Slope per 10 dB\\\\(95\\% CI)}", "\\shortstack{Midpoint-crossing level\\\\(95\\% CI)}", "\\shortstack{Difference from median\\\\(dB)}"),
      "lcccc", "si_zone_targets.tex")
 
 # =============================================================================
@@ -322,7 +322,7 @@ cm <- OUTC("analysis_16_quadrants", "chaotic_minus_monotonous_by_zone.csv"); vc 
 frag(paste0(sapply(ZONE_LEVELS, function(z) { a <- cm[cm$zone == z, ]; b <- vc[vc$zone == z, ]
   row(ZN(z), bse(a$estimate, a$SE, 2), fp(a$p.value), fp(a$p_holm), bse(b$estimate, b$SE, 2), fp(b$p.value), fp(b$p_holm)) }), " \\\\"),
      row("Site", "Estimate (SE)", "$p$", "$p$ (Holm)", "Estimate (SE)", "$p$", "$p$ (Holm)"), "lcccccc", "si_quadrant_contrasts_by_zone.tex",
-     extra_head = "& \\multicolumn{3}{c}{Chaotic $-$ monotonous} & \\multicolumn{3}{c}{Vibrant $-$ calm} \\\\ \\cmidrule(lr){2-4}\\cmidrule(lr){5-7}")
+     extra_head = "& \\multicolumn{3}{c}{Low Comfort: high $-$ low Richness} & \\multicolumn{3}{c}{High Comfort: high $-$ low Richness} \\\\ \\cmidrule(lr){2-4}\\cmidrule(lr){5-7}")
 
 # --- A17: ecoacoustic index screen (primary + full window), increments
 es <- OUTC("analysis_17_ecoacoustic_indices", "single_index_screen_primary_with_fullwindow.csv") %>% mutate(outcome = factor(outcome, levels = OUT4)) %>% arrange(outcome, index)
@@ -434,7 +434,9 @@ frag(arows, row("Term", "Rater's own Comfort and Richness", "Co-walkers' mean Co
 qd <- OUTC(A21, "quadrant_pairwise_own_vs_cowalker.csv")
 qrows <- sapply(unique(qd$contrast), function(k) {
   q <- function(s) { r <- qd[qd$contrast == k & qd$salience == s, ]; c(bse(r$estimate, r$SE, 2), fp(r$p.value)) }
-  paste0(row(sub(" - ", " $-$ ", k), q("own"), q("cowalker")), " \\\\") })
+  display_k <- k
+  for (key in names(QUAD_LAB)) display_k <- gsub(key, paste0("(", gsub("−", "$-$", gsub(" ", ", ", QUAD_LAB[[key]], fixed = TRUE), fixed = TRUE), ")"), display_k, fixed = TRUE)
+  paste0(row(sub(" - ", " $-$ ", display_k), q("own"), q("cowalker")), " \\\\") })
 frag(qrows, row("Contrast", "Own quadrants, estimate (SE)", "Holm $p$", "Co-walkers' quadrants, estimate (SE)", "Holm $p$"), "lcccc", "si_cowalker_quadrants.tex")
 h <- OUTC(A21, "heldout_hierarchy.csv")
 HL <- c(level = "$L_{\\mathrm{Aeq}}$", level_tonality = "$L_{\\mathrm{Aeq}}$ and tonality",

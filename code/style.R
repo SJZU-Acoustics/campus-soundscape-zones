@@ -44,6 +44,8 @@ OUT_COL <- c(comfort = "#0072B2", richness = "#E69F00",
              rating_appropriateness = "#009E73", rating_noisiness = "#D55E00")
 GROUP_COL <- c(natural = "#009E73", human = "#E69F00", mechanical = "#D55E00")
 QUAD_LEVELS <- c("calm", "vibrant", "monotonous", "chaotic")
+# Display labels are coordinate signs; internal keys retain the frozen analysis mapping.
+QUAD_LAB <- c(calm = "C+ R−", vibrant = "C+ R+", monotonous = "C− R−", chaotic = "C− R+")
 QUAD_COL <- c(calm = "#56B4E9", vibrant = "#009E73", monotonous = "#CC79A7", chaotic = "#D55E00")
 # Lighter tints of the quadrant colours for filled areas (F2d stacked bars); the
 # saturated QUAD_COL stays on points and lines (F5b) so the hue mapping is shared.

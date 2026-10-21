@@ -44,7 +44,7 @@ Figure 1a also draws an OpenStreetMap base layer, which is fetched separately (s
   - A03 zone profiles; A04 acoustic indicators, A05 perceived sources and A06 visual composition as predictors of the four outcomes, with A06b re-run without session W04;
   - A07 day type and time slot; A08 person-level variables; A09 variance partitioning and A09b the evaluator random-slope permutation test;
   - A10b the zone × Comfort test on appropriateness; A11 site-held-out prediction by feature family; A12 robustness of the five-feature model, including cumulative-link models;
-  - A13 the natural–mechanical exchange ratio; A14b zone-specific level slopes and neutral levels; A15 Richness and source diversity; A16 and A16b the ICSAQ quadrants;
+  - A13 the mechanical-to-natural coefficient ratio; A14b zone-specific level slopes and midpoint-crossing levels; A15 Richness and source diversity; A16 and A16b the ICSAQ quadrants;
   - A17 ecoacoustic indices; A18 detected sources; A19 the structure of the source groups; A20 sensitivity checks of the headline results; A21 the other listeners' source reports.
 - `code/style.R` — plot style and the reader for the module result tables.
 - `code/build_figures.R` — Figures 1–6.
