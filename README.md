@@ -1,4 +1,4 @@
-R code for reproducing the statistical analyses, figures and tables for the manuscript "Soundscape appropriateness, comfort and richness across the functional zones of a campus landscape".
+R code for reproducing the statistical analyses, figures and tables for the manuscript "Soundscape appropriateness and the management of sound across campus functional zones".
 
 ## Requirements
 
