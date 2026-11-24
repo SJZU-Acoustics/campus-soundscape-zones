@@ -17,7 +17,16 @@ for (y in OUTS) {
 }
 part <- bind_rows(part); w(part, "variance_partition_990.csv")
 k <- nrow(dall) / n_distinct(dall$env_id)
-rel <- part %>% group_by(outcome) %>% summarise(icc1_place = sum(share[grp %in% c("site", "env_id")]), icc1_evaluator = share[grp == "evaluator"], .groups = "drop") %>% mutate(k_raters_per_recording = k, icc_k_place = k * icc1_place / (1 + (k - 1) * icc1_place))
+# All listeners at one stop share its session. Only listener and residual variance average down.
+rel <- part %>%
+  group_by(outcome) %>%
+  summarise(icc1_place = sum(share[grp %in% c("site", "env_id")]),
+            icc1_evaluator = share[grp == "evaluator"],
+            session_share = share[grp == "session"],
+            independent_share = sum(share[grp %in% c("evaluator", "Residual")]),
+            .groups = "drop") %>%
+  mutate(k_raters_per_recording = k,
+         icc_k_place = icc1_place / (icc1_place + session_share + independent_share / k))
 w(rel, "recording_mean_reliability.csv")
 print(part %>% select(outcome, grp, share) %>% pivot_wider(names_from = grp, values_from = share) %>% mutate(across(where(is.numeric), ~round(.x, 3))))
 

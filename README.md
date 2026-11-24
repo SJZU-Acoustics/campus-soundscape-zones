@@ -46,7 +46,7 @@ Figure 1a also draws an OpenStreetMap base layer, which is fetched separately (s
   - A10b the zone × Comfort test on appropriateness; A11 site-held-out prediction by feature family; A12 robustness of the five-feature model, including cumulative-link models;
   - A13 the mechanical-to-natural coefficient ratio; A14b zone-specific level slopes and midpoint-crossing levels; A15 Richness and source diversity; A16 and A16b the ICSAQ quadrants;
   - A17 ecoacoustic indices; A18 detected sources; A19 the structure of the source groups; A20 sensitivity checks of the headline results; A21 the other listeners' source reports;
-  - A23 stop levels against a 55 dB(A) reference level, by site; A24 the number of listeners needed per stop.
+  - A23 stop levels against a 55 dB(A) reference level, by site; A24 the number of listeners needed per stop. The panel-size calculation retains the session variance shared by listeners at a stop and averages the evaluator and residual variance over the panel.
 - `code/style.R` — plot style and the reader for the module result tables.
 - `code/build_figures.R` — Figures 1–6.
 - `code/build_tables.R` — every table of the paper and its Supplementary Information (49 LaTeX fragments).
