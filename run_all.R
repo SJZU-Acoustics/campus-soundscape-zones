@@ -8,8 +8,8 @@
 #         data/osm/osm_campus_features.csv  (optional; Figure 1 only)
 # Writes  output/<analysis>/   one folder per analysis module
 #         output/figures/      Figures 1-6 (PNG, 600 dpi)
-#         output/tables/       Tables 1-2 (LaTeX fragments)
-#         output/tables/si/    Supplementary Tables S1-S34 (LaTeX fragments)
+#         output/tables/       Table 1 and the five-feature model table (LaTeX fragments)
+#         output/tables/si/    the other Supplementary Tables (LaTeX fragments)
 # =============================================================================
 
 start_time <- Sys.time()
@@ -19,8 +19,8 @@ if (!file.exists(file.path("code", "helpers.R"))) {
 }
 
 # Analysis modules. Each reads the deposited tables and writes its own result
-# tables; a06b also reads the result table of a06, so it runs after it. The
-# order is otherwise for readability only.
+# tables; a06b also reads the result table of a06 and a24 those of a09, so each
+# runs after the module it reads. The order is otherwise for readability only.
 MODULES <- c(
   "a01_inventory",
   "a02_acoustic_windows",
@@ -46,7 +46,9 @@ MODULES <- c(
   "a19_source_structure",
   "a20_core_stability",
   "a20_storyline_checks",
-  "a21_cowalker"
+  "a21_cowalker",
+  "a23_level_limit",
+  "a24_listeners"
 )
 
 # Each script runs in a fresh R session, as in the working pipeline, so no

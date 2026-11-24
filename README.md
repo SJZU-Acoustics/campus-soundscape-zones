@@ -45,10 +45,11 @@ Figure 1a also draws an OpenStreetMap base layer, which is fetched separately (s
   - A07 day type and time slot; A08 person-level variables; A09 variance partitioning and A09b the evaluator random-slope permutation test;
   - A10b the zone × Comfort test on appropriateness; A11 site-held-out prediction by feature family; A12 robustness of the five-feature model, including cumulative-link models;
   - A13 the mechanical-to-natural coefficient ratio; A14b zone-specific level slopes and midpoint-crossing levels; A15 Richness and source diversity; A16 and A16b the ICSAQ quadrants;
-  - A17 ecoacoustic indices; A18 detected sources; A19 the structure of the source groups; A20 sensitivity checks of the headline results; A21 the other listeners' source reports.
+  - A17 ecoacoustic indices; A18 detected sources; A19 the structure of the source groups; A20 sensitivity checks of the headline results; A21 the other listeners' source reports;
+  - A23 stop levels against a 55 dB(A) reference level, by site; A24 the number of listeners needed per stop.
 - `code/style.R` — plot style and the reader for the module result tables.
 - `code/build_figures.R` — Figures 1–6.
-- `code/build_tables.R` — Tables 1–2 and Supplementary Tables S1–S34 (LaTeX fragments).
+- `code/build_tables.R` — every table of the paper and its Supplementary Information (49 LaTeX fragments).
 - `code/fetch_osm.py` — fetches the OpenStreetMap layer of Figure 1a.
 
 ## Usage
@@ -63,8 +64,8 @@ Rscript run_all.R
 Outputs are written to:
 
 - `output/figures/` — Figures 1–6 (PNG, 600 dpi)
-- `output/tables/` — Tables 1–2 (LaTeX fragments)
-- `output/tables/si/` — Supplementary Tables S1–S34 (LaTeX fragments; some tables combine two fragments)
+- `output/tables/` — Table 1 and the table of the five-feature model (LaTeX fragments)
+- `output/tables/si/` — the other Supplementary Tables (LaTeX fragments named by analysis; some tables combine two fragments)
 - `output/<analysis>/` — the full result tables of each analysis module
 
 To keep the console log alongside the outputs:
@@ -77,13 +78,13 @@ Rscript run_all.R 2>&1 | tee output/run_log.txt
 
 ## Verification
 
-Run against the deposited workbook, this pipeline reproduces the paper's display items: Tables 1–2 and all 34 Supplementary Tables (the 49 LaTeX fragments) and Figures 1, 2, 3 and 6 are **byte-identical** to the versions in the paper (Figure 1 with the OpenStreetMap layer used for the paper). Figures 4 and 5 match apart from anti-aliasing: 694 and 37 of about 15 million pixels differ, by at most 2 of 255 in one colour channel. The bootstraps and the permutation test draw from fixed seeds set in the scripts and run serially, so they regenerate exactly.
+Run against the deposited workbook, this pipeline reproduces the paper's display items: every table (the 49 LaTeX fragments) and Figures 1, 2, 3 and 6 are **byte-identical** to the versions in the paper (Figure 1 with the OpenStreetMap layer used for the paper). Figures 4 and 5 match apart from anti-aliasing: 694 and 37 of about 15 million pixels differ, by at most 2 of 255 in one colour channel. The bootstraps and the permutation test draw from fixed seeds set in the scripts and run serially, so they regenerate exactly.
 
-Workbook cells hold 16 significant digits, so some computed values in the deposit differ from the working data in their last digit, and the unrounded columns of the module result tables differ from the working pipeline in their last digits. Across the 26,614 numeric result cells, the two largest relative differences, about 3e-4, are on the difference of two nearly equal R² values (1.0604e-4 against 1.0600e-4) and on a p-value of 1.5e-5. All other cells differ by less than 3e-5, and estimates and test statistics by less than 2e-5: an input perturbation of about 1e-16 grows through model fitting and the numerical derivatives behind the degrees of freedom. Every quantity reported in the paper is printed to far fewer digits, and none of them moves.
+Workbook cells hold 16 significant digits, so some computed values in the deposit differ from the working data in their last digit, and the unrounded columns of the module result tables differ from the working pipeline in their last digits. Across the 26,738 numeric result cells, the two largest relative differences, about 3e-4, are on the difference of two nearly equal R² values (1.0604e-4 against 1.0600e-4) and on a p-value of 1.5e-5. All other cells differ by less than 3e-5, and estimates and test statistics by less than 2e-5: an input perturbation of about 1e-16 grows through model fitting and the numerical derivatives behind the degrees of freedom. Every quantity reported in the paper is printed to far fewer digits, and none of them moves.
 
 ## Notes
 
-- Each module runs in its own R session, reads the deposited tables through `code/helpers.R` and writes only into its analysis folder under `output/`. A06b reads the A06 screen and therefore runs after it; `build_tables.R` reads the Figure 3a estimates that `build_figures.R` writes. The other modules can be run individually and in any order.
+- Each module runs in its own R session, reads the deposited tables through `code/helpers.R` and writes only into its analysis folder under `output/`. A06b reads the A06 screen and A24 the A09 variance partition, so each runs after the module it reads; `build_tables.R` reads the Figure 3a estimates that `build_figures.R` writes. The other modules can be run individually and in any order.
 - The rating models are linear mixed models with crossed random intercepts for evaluator and stop, fitted by REML with Kenward–Roger degrees of freedom for marginal means and trends (Satterthwaite in A03); model comparisons refit by ML.
 - The primary acoustic layer is the 30-s region of the 666 ratings at stops with a calibrated recording; the 990-rating models use the XL2 level.
 - Benjamini–Hochberg false-discovery-rate control is applied within the declared families of each module; single pre-specified tests report their own p.

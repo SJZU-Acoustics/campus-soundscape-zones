@@ -1,5 +1,5 @@
 # =============================================================================
-# build_tables.R — LaTeX fragments of Tables 1-2 and Supplementary Tables S1-S34.
+# build_tables.R — LaTeX fragments of every table of the paper and its Supplementary Information.
 # Each fragment is a bare booktabs tabular; captions and table environments are
 # in the paper and its Supplementary Information.
 # Sources: the deposited tables (Table 1) and the analysis result tables in output/.
@@ -50,8 +50,9 @@ stopifnot(!any(is.na(env$zone)))
 # =============================================================================
 # Table 1 (main) — sample and sites
 # =============================================================================
+LIMIT_DB <- 55   # dB(A): Class 1 daytime limit of GB 3096-2008, used as a reference level (A23)
 env_z <- env %>% mutate(zone = factor(zone, levels = ZONE_LEVELS)) %>% group_by(zone) %>%
-  summarise(n_env = n(), n_wav = sum(wav_recorded == 1),
+  summarise(n_env = n(), n_wav = sum(wav_recorded == 1), n_above = sum(xl2_laeq > LIMIT_DB),
             xl2_m = mean(xl2_laeq), xl2_sd = sd(xl2_laeq),
             bk_m = mean(bk_laeq, na.rm = TRUE), bk_sd = sd(bk_laeq, na.rm = TRUE),
             ton_m = mean(tonality, na.rm = TRUE), ton_sd = sd(tonality, na.rm = TRUE),
@@ -63,11 +64,13 @@ chk <- OUTC("analysis_01_inventory", "env_descriptives_by_zone.csv")
 stopifnot(all(abs(env_z$xl2_m - chk$xl2_laeq[match(env_z$zone, chk$zone)]) < 1e-6),
           all(abs(env_z$bk_m - chk$bk_laeq[match(env_z$zone, chk$zone)]) < 1e-6),
           all(env_z$n_wav == chk$n_wav[match(env_z$zone, chk$zone)]))
+chk23 <- OUTC("analysis_23_level_limit", "limit_by_site.csv")
+stopifnot(all(env_z$n_above == chk23$n_above[match(env_z$zone, chk23$zone)]), sum(env_z$n_above) == 94)
 chk2 <- OUTC("analysis_01_inventory", "source_groups_by_zone.csv")
 stopifnot(all(abs(rec_z$s_nat - chk2$natural[match(rec_z$zone, chk2$zone)]) < 1e-6))
 t1 <- env_z %>% left_join(rec_z, by = "zone") %>% left_join(sites %>% select(zone, site), by = "zone")
 tot <- tibble(zone = "All", site = "", n_rec = nrow(d_all), n_env = nrow(env),
-              n_wav = sum(env$wav_recorded == 1),
+              n_wav = sum(env$wav_recorded == 1), n_above = sum(env$xl2_laeq > LIMIT_DB),
               xl2_m = mean(env$xl2_laeq), xl2_sd = sd(env$xl2_laeq),
               bk_m = mean(env$bk_laeq, na.rm = TRUE), bk_sd = sd(env$bk_laeq, na.rm = TRUE),
               ton_m = mean(env$tonality, na.rm = TRUE), ton_sd = sd(env$tonality, na.rm = TRUE),
@@ -75,6 +78,7 @@ tot <- tibble(zone = "All", site = "", n_rec = nrow(d_all), n_env = nrow(env),
               s_nat = mean(d_all$src_natural), s_hum = mean(d_all$src_human), s_mech = mean(d_all$src_mechanical))
 t1r <- function(r, lab) row(lab,
                              paste0(fnum(r$xl2_m, 1), " (", fnum(r$xl2_sd, 1), ")"),
+                             paste0(r$n_above, "/", r$n_env),
                              paste0(fnum(r$bk_m, 1), " (", fnum(r$bk_sd, 1), ")"),
                              paste0(fnum(r$ton_m, 2), " (", fnum(r$ton_sd, 2), ")"),
                              fnum(r$nat_m, 2), fnum(r$s_nat, 2), fnum(r$s_hum, 2), fnum(r$s_mech, 2))
@@ -82,10 +86,10 @@ rows <- c(sapply(seq_len(nrow(t1)), function(i) {
   r <- t1[i, ]; t1r(r, paste0(r$site, " ", ZN(r$zone)))
 }) %>% paste0(" \\\\"), mid, paste0(t1r(tot, "All sites"), " \\\\"))
 frag(rows, row("Site",
-               "\\shortstack{$L_{\\mathrm{Aeq}}$ XL2\\\\(dB(A))}", "\\shortstack{$L_{\\mathrm{Aeq}}$ 30-s\\\\(dB(A))}",
+               "\\shortstack{$L_{\\mathrm{Aeq}}$ XL2\\\\(dB(A))}", "\\shortstack{Stops $>$\\\\55 dB(A)}", "\\shortstack{$L_{\\mathrm{Aeq}}$ 30-s\\\\(dB(A))}",
                "Tonality", "\\shortstack{Natural-\\\\ness}", "Natural", "Human", "Mechanical"),
-     "lccccccc", "tab1_sites.tex",
-     extra_head = "& & & & & \\multicolumn{3}{c}{Source salience (0--10)} \\\\ \\cmidrule(lr){6-8}")
+     "lcccccccc", "tab1_sites.tex",
+     extra_head = "& & & & & & \\multicolumn{3}{c}{Source salience (0--10)} \\\\ \\cmidrule(lr){7-9}")
 
 # =============================================================================
 # Table 2 (main) — the five-feature model (666 records), the 990-record
@@ -246,11 +250,13 @@ frag(paste0(sapply(seq_len(nrow(rs)), function(i) { r <- rs[i, ]; row(OUTN[as.ch
 # --- A09: variance partition (990) + recording-mean reliability
 vp <- OUTC("analysis_09_variance_partitioning", "variance_partition_990.csv") %>% select(outcome, grp, share) %>% tidyr::pivot_wider(names_from = grp, values_from = share)
 rl <- OUTC("analysis_09_variance_partitioning", "recording_mean_reliability.csv")
-vp <- vp %>% left_join(rl, by = "outcome") %>% mutate(outcome = factor(outcome, levels = OUT4)) %>% arrange(outcome)
+lp <- OUTC("analysis_24_listeners_per_point", "listeners_per_point.csv") %>% select(outcome, k70 = `k_for_0.70`, k80 = `k_for_0.80`, k90 = `k_for_0.90`)
+vp <- vp %>% left_join(rl, by = "outcome") %>% left_join(lp, by = "outcome") %>% mutate(outcome = factor(outcome, levels = OUT4)) %>% arrange(outcome)
+stopifnot(!any(is.na(vp$k80)))
 frag(paste0(sapply(seq_len(nrow(vp)), function(i) { r <- vp[i, ]; row(OUTN[as.character(r$outcome)], fnum(100 * r$site, 1), fnum(100 * r$env_id, 1), fnum(100 * r$evaluator, 1), fnum(100 * r$session, 1), fnum(100 * r$Residual, 1),
-  fnum(r$icc1_place, 2), fnum(r$icc1_evaluator, 2), fnum(r$k_raters_per_recording, 2), fnum(r$icc_k_place, 2)) }), " \\\\"),
-     row("Outcome", "Site", "Stop", "Evaluator", "Session", "Residual", "ICC(1) place", "ICC(1) evaluator", "$k$", "ICC($k$) place"), "lccccccccc", "si_variance_partition.tex",
-     extra_head = "& \\multicolumn{5}{c}{Variance share (\\%)} & \\multicolumn{4}{c}{Reliability of the stop mean} \\\\ \\cmidrule(lr){2-6}\\cmidrule(lr){7-10}")
+  fnum(r$icc1_place, 2), fnum(r$icc1_evaluator, 2), fnum(r$k_raters_per_recording, 2), fnum(r$icc_k_place, 2), r$k70, r$k80, r$k90) }), " \\\\"),
+     row("Outcome", "Site", "Stop", "Evaluator", "Session", "Residual", "ICC(1) place", "ICC(1) evaluator", "$k$", "ICC($k$) place", "0.70", "0.80", "0.90"), "lcccccccccccc", "si_variance_partition.tex",
+     extra_head = "& \\multicolumn{5}{c}{Variance share (\\%)} & \\multicolumn{4}{c}{Reliability of the stop mean} & \\multicolumn{3}{c}{Listeners for a reliability of} \\\\ \\cmidrule(lr){2-6}\\cmidrule(lr){7-10}\\cmidrule(lr){11-13}")
 ladf <- OUTC("analysis_09_variance_partitioning", "predictor_ladder_variance.csv") %>% mutate(outcome = factor(outcome, levels = OUT4)) %>% arrange(outcome)
 STEPN <- c(none = "Null", level = "$L_{\\mathrm{Aeq}}$", level_tonality = "+ tonality", plus_sources = "+ three source groups", plus_zone = "+ zone")
 frag(paste0(sapply(seq_len(nrow(ladf)), function(i) { r <- ladf[i, ]; row(OUTN[as.character(r$outcome)], STEPN[r$step], fnum(r$var_evaluator, 4), fnum(r$var_env, 4), fnum(r$var_resid, 4), fnum(r$r2m, 3), fnum(r$r2c, 3), fnum(100 * r$env_var_explained, 1)) }), " \\\\"),
